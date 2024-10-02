@@ -3,48 +3,37 @@
 # The deployment process is divided into various stages.
 
 # Deploy local L1.
-deploy_l1: true
-
+deploy_l1: false
 # Deploy zkevm contracts on L1 (and also fund accounts).
 deploy_zkevm_contracts_on_l1: true
-
 # Deploy zkevm node and cdk peripheral databases.
 deploy_databases: true
-
 # Deploy cdk central/trusted environment.
 deploy_cdk_central_environment: true
-
 # Deploy cdk/bridge infrastructure.
 deploy_cdk_bridge_infra: true
-
 # Deploy agglayer.
 deploy_agglayer: true
-
 # Deploy cdk-erigon node.
 deploy_cdk_erigon_node: true
-
 args:
   # Suffix appended to service names.
   # Note: It should be a string.
   deployment_suffix: "-001"
-
   # The global log level that all components of the stack should log at.
   # Valid values are "error", "warn", "info", "debug", and "trace".
   global_log_level: info
-
   # The type of the sequencer to deploy.
   # Options:
   # - 'erigon': Use the new sequencer (https://github.com/0xPolygonHermez/cdk-erigon).
   # - 'zkevm': Use the legacy sequencer (https://github.com/0xPolygonHermez/zkevm-node).
   sequencer_type: erigon
-
   # The type of data availability to use.
   # Options:
   # - 'rollup': Transaction data is stored on-chain on L1.
   # - 'cdk-validium': Transaction data is stored off-chain using the CDK DA layer and a DAC.
   # In the future, we would like to support external DA protocols such as Avail, Celestia and Near.
   data_availability_mode: cdk-validium
-
   # Additional services to run alongside the network.
   # Options:
   # - arpeggio
@@ -55,20 +44,16 @@ args:
   # - prometheus_grafana
   # - tx_spammer
   additional_services: []
-
   # FORK 12 IMAGES
   zkevm_contracts_image: leovct/zkevm-contracts:v8.0.0-rc.4-fork.12
   zkevm_prover_image: hermeznetwork/zkevm-prover:v8.0.0-RC12-fork.12
   cdk_erigon_node_image: hermeznetwork/cdk-erigon:4cf9ba7
-
   # FORK 11 IMAGES
   # zkevm_contracts_image: leovct/zkevm-contracts:v7.0.0-rc.2-fork.11
   # zkevm_prover_image: hermeznetwork/zkevm-prover:v7.0.2-fork.11
   # cdk_erigon_node_image: hermeznetwork/cdk-erigon:v1.2.22
-
   zkevm_node_image: hermeznetwork/zkevm-node:v0.7.3-RC1
   cdk_validium_node_image: 0xpolygon/cdk-validium-node:0.7.0-cdk
-
   cdk_node_image: ghcr.io/0xpolygon/cdk:0.1.1
   zkevm_da_image: 0xpolygon/cdk-data-availability:0.0.10
   agglayer_image: ghcr.io/agglayer/agglayer-rs:pr-96
@@ -77,7 +62,6 @@ args:
   zkevm_bridge_proxy_image: haproxy:3.0-bookworm
   zkevm_sequence_sender_image: hermeznetwork/zkevm-sequence-sender:v0.2.0-RC12
   zkevm_pool_manager_image: hermeznetwork/zkevm-pool-manager:v0.1.0
-
   # Port configuration.
   zkevm_hash_db_port: 50061
   zkevm_executor_port: 50071
@@ -93,70 +77,51 @@ args:
   agglayer_port: 4444
   zkevm_dac_port: 8484
   zkevm_pool_manager_port: 8545
-
   # Addresses and private keys of the different components.
   # They have been generated using the following command:
+  # actual mnemonic online rabbit during category change arch awful turkey glove company decide whale
   # polycli wallet inspect --mnemonic 'lab code glass agree maid neutral vessel horror deny frequent favorite soft gate galaxy proof vintage once figure diary virtual scissors marble shrug drop' --addresses 9 | tee keys.txt | jq -r '.Addresses[] | [.ETHAddress, .HexPrivateKey] | @tsv' | awk 'BEGIN{split("sequencer,aggregator,claimtxmanager,timelock,admin,loadtest,agglayer,dac,proofsigner",roles,",")} {print "zkevm_l2_" roles[NR] "_address: \"" $1 "\""; print "zkevm_l2_" roles[NR] "_private_key: \"0x" $2 "\"\n"}'
-  zkevm_l2_sequencer_address: "0x5b06837A43bdC3dD9F114558DAf4B26ed49842Ed"
-  zkevm_l2_sequencer_private_key: "0x183c492d0ba156041a7f31a1b188958a7a22eebadca741a7fe64436092dc3181"
-
-  zkevm_l2_aggregator_address: "0xCae5b68Ff783594bDe1b93cdE627c741722c4D4d"
-  zkevm_l2_aggregator_private_key: "0x2857ca0e7748448f3a50469f7ffe55cde7299d5696aedd72cfe18a06fb856970"
-
-  zkevm_l2_claimtxmanager_address: "0x5f5dB0D4D58310F53713eF4Df80ba6717868A9f8"
-  zkevm_l2_claimtxmanager_private_key: "0x8d5c9ecd4ba2a195db3777c8412f8e3370ae9adffac222a54a84e116c7f8b934"
-
-  zkevm_l2_timelock_address: "0x130aA39Aa80407BD251c3d274d161ca302c52B7A"
-  zkevm_l2_timelock_private_key: "0x80051baf5a0a749296b9dcdb4a38a264d2eea6d43edcf012d20b5560708cf45f"
-
-  zkevm_l2_admin_address: "0xE34aaF64b29273B7D567FCFc40544c014EEe9970"
-  zkevm_l2_admin_private_key: "0x12d7de8621a77640c9241b2595ba78ce443d05e94090365ab3bb5e19df82c625"
-
-  zkevm_l2_loadtest_address: "0x81457240ff5b49CaF176885ED07e3E7BFbE9Fb81"
-  zkevm_l2_loadtest_private_key: "0xd7df6d64c569ffdfe7c56e6b34e7a2bdc7b7583db74512a9ffe26fe07faaa5de"
-
-  zkevm_l2_agglayer_address: "0x351e560852ee001d5D19b5912a269F849f59479a"
-  zkevm_l2_agglayer_private_key: "0x1d45f90c0a9814d8b8af968fa0677dab2a8ff0266f33b136e560fe420858a419"
-
-  zkevm_l2_dac_address: "0x5951F5b2604c9B42E478d5e2B2437F44073eF9A6"
-  zkevm_l2_dac_private_key: "0x85d836ee6ea6f48bae27b31535e6fc2eefe056f2276b9353aafb294277d8159b"
-
-  zkevm_l2_proofsigner_address: "0x7569cc70950726784c8D3bB256F48e43259Cb445"
-  zkevm_l2_proofsigner_private_key: "0x77254a70a02223acebf84b6ed8afddff9d3203e31ad219b2bf900f4780cf9b51"
-
+zkevm_l2_sequencer_address: "0xD04F0BA1BDB4ff3F9fCa6c95Fb4d5eC4fB77b781"
+zkevm_l2_sequencer_private_key: "0x98bfcb13df384ad9168fdce55e27d2f66ed354f9d338db6e7587d5bb908534d0"
+zkevm_l2_aggregator_address: "0x7A83bA5f0434e366880BC07BC859bB431874156E"
+zkevm_l2_aggregator_private_key: "0x46cc54a6adb6668bee12d6da4b496b54928f7dd1351e8f0e51b61db07699821e"
+zkevm_l2_claimtxmanager_address: "0x4550526A5851CAff4EAbCD4D4D0e126a19035b83"
+zkevm_l2_claimtxmanager_private_key: "0x9e9b2ed93d3ccac53a1f379c976ac69afc2d307f3cb400ada6d4fac386f29c40"
+zkevm_l2_timelock_address: "0x9aaaD3283062bb3f48B4618A49a44f4f9C2081ab"
+zkevm_l2_timelock_private_key: "0xfa4d2f089ee004237170539ce47d00a1daf5f36084cecbd52139068103dc5a98"
+zkevm_l2_admin_address: "0x8e5611Fd24b55f4202DfA929c21F0EE1Db93F3B9"
+zkevm_l2_admin_private_key: "0xcbb7b1fbcf404769cf3eca6ca7facb8ddd8a1d110459b3739d413519bf4a204c"
+zkevm_l2_loadtest_address: "0x1FD4AA26b0afb618DD3D6731Bbc1FD2BE6058D9B"
+zkevm_l2_loadtest_private_key: "0x4bc76b4ea6acde88c76394790ac60f5b923a4e75c8d5c9d6dbd699dc8cee46f2"
+zkevm_l2_agglayer_address: "0x5A6e733642AfEC8aF1d157f756365F4446921BdD"
+zkevm_l2_agglayer_private_key: "0xef40f6fd058d99dd2c07445fc23cc317be5faafea17384b086b87f5e76a07c60"
+zkevm_l2_dac_address: "0xE5bB9911D73AB76AC531E8858cf9a43E16e64b57"
+zkevm_l2_dac_private_key: "0x0458b111597029045f96dff4a4b601d00d6d1a13625673c0aa5955dcb8952acd"
+zkevm_l2_proofsigner_address: "0x60f61B715d4Bc6f8092834921990C37e7531268E"
+zkevm_l2_proofsigner_private_key: "0xa84f51bfb3a77408a9155875401977aaa4c41713f5ba12dec9230dcb5eee6ffc"
   # Keystore password.
   zkevm_l2_keystore_password: pSnv6Dh5s9ahuzGzH9RoCDrKAMddaX3m
-
   ## L1 configuration.
-  l1_chain_id: 271828
-  l1_preallocated_mnemonic: code code code code code code code code code code code quality
-  l1_funding_amount: 100ether
-  l1_rpc_url: http://el-1-geth-lighthouse:8545
-  l1_ws_url: ws://el-1-geth-lighthouse:8546
+  l1_chain_id: 11155111
+  l1_preallocated_mnemonic: valley possible moment power fish label frozen eternal shift chalk girl crack 
+  l1_funding_amount: 0.12ether
+  l1_rpc_url: https://eth-sepolia.g.alchemy.com/v2/RK2FNX2SCEwCo5sFChdNqHHHz_YvM73l
+  l1_ws_url: wss://eth-sepolia.g.alchemy.com/v2/RK2FNX2SCEwCo5sFChdNqHHHz_YvM73l
   # https://github.com/ethpandaops/ethereum-package/tree/main?tab=readme-ov-file#configuration
-  l1_additional_services: [
-  # blockscout, # block explorer
-  # dora, # beaconchain explorer
-  # el_forkmon, # fork monitor tool
-  ]
+  l1_additional_services: []
   l1_preset: minimal
   l1_seconds_per_slot: 1
-
   ## Rollup configuration.
 
   # The chain id of the new rollup.
   zkevm_rollup_chain_id: 10101
-
   # The rollupID of the CDK.
   zkevm_rollup_id: 1
-
   # By default a mock verifier is deployed. Change to true to deploye a real verifier which will require a real prover
   zkevm_use_real_verifier: false
-
   # If erigon is being used as the sequencer,
   # This flag will enable a stateless executor to verify the execution of the batches.
   erigon_strict_mode: true
-
   # The address of the rollup manager contract on L1.
   # If specified, the rollup data will be retrieved from this contract instead of using the contracts service.
   # zkevm_rollup_manager_address: ""
@@ -166,14 +131,11 @@ args:
   # zkevm_global_exit_root_l2_address: ""
   # # The address of the Polygon data committee contract on L1.
   # polygon_data_committee_address: ""
-
   polygon_zkevm_explorer: https://explorer.private/
   l1_explorer_url: https://sepolia.etherscan.io/
-
   # If this is true, we will automatically deploy an ERC20 contract on
   # L1 to be used at the gasTokenAddress
   zkevm_use_gas_token_contract: false
-
   ## Permissionless node configuration.
   trusted_sequencer_node_uri: zkevm-node-sequencer-001:6900
   zkevm_aggregator_host: zkevm-node-aggregator-001
